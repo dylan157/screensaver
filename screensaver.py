@@ -3,6 +3,8 @@ import time
 from sys import platform
 import os
 
+#HELLO J
+
 if platform == "linux" or platform == "linux2":
     clear = lambda: os.system('clear')
 elif platform == "darwin":
@@ -10,17 +12,18 @@ elif platform == "darwin":
 elif platform == "win32":
     clear = lambda: os.system('cls')
 
-#config Varibles 
-map_xy = 28
-trail_len = 280
+#config variables. CHANGE US!
+map_xy = 14
+trail_len = 12
+trail_text = "HELLO_WORLD_"
 
-#boring varibles 
+#boring variables 
 screen = []
 blank_icon = " "
-player_icon = "#"
-player_xy = [1,0]
+player_xy = [0,0]
 move = []
 trail = []
+count = 0
 
 
 for click in range(map_xy):
@@ -41,6 +44,7 @@ def player_moves():
     else:
         move.append(randint(0, 1))
     return move
+player_moves()
 
 def board_transport(move_choice):
     global player_xy #Player xy_location changer based on player_move() output and move logic (if xy != off-map or trail)
@@ -52,18 +56,18 @@ def board_transport(move_choice):
     if chance == map_xy: player_moves()
     if move_choice[0] == 0:
         if move_choice[1] == 0 and (player_xy[0] - 1 >= 0) and (player_xy[1] - 1 >= 0):
-            if screen[(player_xy[0] - 1)][(player_xy[1] - 1)] not in (player_icon):
+            if screen[(player_xy[0] - 1)][(player_xy[1] - 1)] not in (trail_text):
                 player_xy[0] -= 1
                 player_xy[1] -= 1
             else:
                 board_transport(player_moves())
         elif move_choice[1] == 1 and (player_xy[0] - 1 >= 0):
-            if screen[(player_xy[0] - 1)][(player_xy[1])] not in (player_icon):
+            if screen[(player_xy[0] - 1)][(player_xy[1])] not in (trail_text):
                 player_xy[0] -= 1
             else:
                 board_transport(player_moves())
         elif move_choice[1] == 2 and (player_xy[0] - 1 >= 0) and (player_xy[1] + 1 <= len(screen)-1):
-            if screen[(player_xy[0] - 1)][(player_xy[1] + 1)] not in (player_icon):
+            if screen[(player_xy[0] - 1)][(player_xy[1] + 1)] not in (trail_text):
                 player_xy[0] -= 1
                 player_xy[1] += 1
             else:
@@ -73,12 +77,12 @@ def board_transport(move_choice):
 
     elif move_choice[0] == 1:
         if move_choice[1] == 0 and (player_xy[1] - 1 >= 0):
-            if screen[(player_xy[0])][(player_xy[1] - 1)] not in (player_icon):
+            if screen[(player_xy[0])][(player_xy[1] - 1)] not in (trail_text):
                 player_xy[1] -= 1
             else:
                 board_transport(player_moves())
         elif move_choice[1] == 1 and (player_xy[1] + 1 <= len(screen)-1):
-            if screen[(player_xy[0])][(player_xy[1] + 1)] not in (player_icon):
+            if screen[(player_xy[0])][(player_xy[1] + 1)] not in (trail_text):
                 player_xy[1] += 1
             else:
                 board_transport(player_moves())
@@ -87,18 +91,18 @@ def board_transport(move_choice):
 
     elif move_choice[0] == 2:
         if move_choice[1] == 0 and (player_xy[0] + 1 <= len(screen)-1) and (player_xy[1] - 1 >= 0):
-            if screen[(player_xy[0] + 1)][(player_xy[1] - 1)] not in (player_icon):
+            if screen[(player_xy[0] + 1)][(player_xy[1] - 1)] not in (trail_text):
                 player_xy[0] += 1
                 player_xy[1] -= 1
             else:
                 board_transport(player_moves())
         elif move_choice[1] == 1 and (player_xy[0] + 1 <= len(screen)-1):
-            if screen[(player_xy[0] + 1)][(player_xy[1])] not in (player_icon):
+            if screen[(player_xy[0] + 1)][(player_xy[1])] not in (trail_text):
                 player_xy[0] += 1
             else:
                 board_transport(player_moves())
         elif move_choice[1] == 2 and (player_xy[0] + 1 <= len(screen)-1) and (player_xy[1] + 1 <= len(screen)-1):
-            if screen[(player_xy[0] + 1)][(player_xy[1] + 1)] not in (player_icon):
+            if screen[(player_xy[0] + 1)][(player_xy[1] + 1)] not in (trail_text):
                 player_xy[0] += 1
                 player_xy[1] += 1
             else:
@@ -107,19 +111,18 @@ def board_transport(move_choice):
             board_transport(player_moves())
 
 def draw():
+    global count
     clear()
-    screen[player_xy[0]][player_xy[1]] = player_icon
+    screen[player_xy[0]][player_xy[1]] = trail_text[count%len(trail_text)-1]
     print_board(screen)
     trail.append(player_xy[:])
     if len(trail) > trail_len:
         screen[trail[0][0]][trail[0][1]] = blank_icon
         del(trail[0])
     time.sleep(0.066666666)
-
-
-        
-print player_moves()
-
+    count += 1
+print "You can change trail text, trail length and map size by editing Config variables!"
+time.sleep(2)
 while True:
     safety = 0
     if move == None:
