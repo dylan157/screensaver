@@ -15,9 +15,9 @@ elif platform == "win32":
 #config variables. CHANGE US!
 map_xy = 40 #40 max
 trail_len = 0
-trail_text = "#"
-trail_speed = 0.001
-trail_random = 20
+trail_text = "~-"
+trail_speed = 0.1
+trail_random = 100
 
 #boring variables 
 screen = []
