@@ -13,20 +13,16 @@ elif platform == "win32":
     clear = lambda: os.system('cls')
 
 #config variables. CHANGE US!
-map_xy = 40 #40 max
-trail_len = 0
-trail_text = "#"
-trail_speed = 0.001
-trail_random = 20
+map_xy = 14
+trail_len = 12
+trail_text = "HELLO_WORLD_"
 
 #boring variables 
 screen = []
 blank_icon = " "
-player_zero= [int(map_xy*0.5) , int(map_xy*0.5), ""]#left
-player_list = [player_zero, [player_zero[0], player_zero[1]+2, ""], [player_zero[0]-1, player_zero[1]+1, ""], [player_zero[0]+1, player_zero[1]+1, ""]]
-temp_player_list = []
+player_xy = [0,0]
 move = []
-trail_history = []
+trail = []
 count = 0
 
 
@@ -50,124 +46,90 @@ def player_moves():
     return move
 player_moves()
 
-def board_transport(move_choice, who):
-    #Player xy_location changer based on player_move() output and move logic (if xy != off-map or trail)
+def board_transport(move_choice):
+    global player_xy #Player xy_location changer based on player_move() output and move logic (if xy != off-map or trail)
     global safety
-    global blank_icon
     safety += 1
-    if safety > 10:
-        all = [randint(0, len(screen)-1), randint(0, len(screen)-1)]
-        for PLAYER in player_list:
-            PLAYER = all
+    if safety > 100:
+        player_xy = [randint(0, len(screen)-1), randint(0, len(screen)-1)]
+    chance = randint(0, map_xy)
+    if chance == map_xy: player_moves()
     if move_choice[0] == 0:
-        if move_choice[1] == 0 and (who[0] - 1 >= 0) and (who[1] - 1 >= 0):
-            if screen[(who[0] - 1)][(who[1] - 1)] not in (trail_text):
-                who[0] -= 1
-                who[1] -= 1
+        if move_choice[1] == 0 and (player_xy[0] - 1 >= 0) and (player_xy[1] - 1 >= 0):
+            if screen[(player_xy[0] - 1)][(player_xy[1] - 1)] not in (trail_text):
+                player_xy[0] -= 1
+                player_xy[1] -= 1
             else:
-                who[2] = "err"
-        elif move_choice[1] == 1 and (who[0] - 1 >= 0):
-            if screen[(who[0] - 1)][(who[1])] not in (trail_text):
-                who[0] -= 1
+                board_transport(player_moves())
+        elif move_choice[1] == 1 and (player_xy[0] - 1 >= 0):
+            if screen[(player_xy[0] - 1)][(player_xy[1])] not in (trail_text):
+                player_xy[0] -= 1
             else:
-                who[2] = "err"
-        elif move_choice[1] == 2 and (who[0] - 1 >= 0) and (who[1] + 1 <= len(screen)-1):
-            if screen[(who[0] - 1)][(who[1] + 1)] not in (trail_text):
-                who[0] -= 1
-                who[1] += 1
+                board_transport(player_moves())
+        elif move_choice[1] == 2 and (player_xy[0] - 1 >= 0) and (player_xy[1] + 1 <= len(screen)-1):
+            if screen[(player_xy[0] - 1)][(player_xy[1] + 1)] not in (trail_text):
+                player_xy[0] -= 1
+                player_xy[1] += 1
             else:
-                who[2] = "err"
+                board_transport(player_moves())
         else:
-            who[2] = "err"
+            board_transport(player_moves())
 
     elif move_choice[0] == 1:
-        if move_choice[1] == 0 and (who[1] - 1 >= 0):
-            if screen[(who[0])][(who[1] - 1)] not in (trail_text):
-                who[1] -= 1
+        if move_choice[1] == 0 and (player_xy[1] - 1 >= 0):
+            if screen[(player_xy[0])][(player_xy[1] - 1)] not in (trail_text):
+                player_xy[1] -= 1
             else:
-                who[2] = "err"
-        elif move_choice[1] == 1 and (who[1] + 1 <= len(screen)-1):
-            if screen[(who[0])][(who[1] + 1)] not in (trail_text):
-                who[1] += 1
+                board_transport(player_moves())
+        elif move_choice[1] == 1 and (player_xy[1] + 1 <= len(screen)-1):
+            if screen[(player_xy[0])][(player_xy[1] + 1)] not in (trail_text):
+                player_xy[1] += 1
             else:
-                who[2] = "err"
+                board_transport(player_moves())
         else:
-            who[2] = "err"
+            board_transport(player_moves())
 
     elif move_choice[0] == 2:
-        if move_choice[1] == 0 and (who[0] + 1 <= len(screen)-1) and (who[1] - 1 >= 0):
-            if screen[(who[0] + 1)][(who[1] - 1)] not in (trail_text):
-                who[0] += 1
-                who[1] -= 1
+        if move_choice[1] == 0 and (player_xy[0] + 1 <= len(screen)-1) and (player_xy[1] - 1 >= 0):
+            if screen[(player_xy[0] + 1)][(player_xy[1] - 1)] not in (trail_text):
+                player_xy[0] += 1
+                player_xy[1] -= 1
             else:
-                who[2] = "err"
-        elif move_choice[1] == 1 and (who[0] + 1 <= len(screen)-1):
-            if screen[(who[0] + 1)][(who[1])] not in (trail_text):
-                who[0] += 1
+                board_transport(player_moves())
+        elif move_choice[1] == 1 and (player_xy[0] + 1 <= len(screen)-1):
+            if screen[(player_xy[0] + 1)][(player_xy[1])] not in (trail_text):
+                player_xy[0] += 1
             else:
-                who[2] = "err"
-        elif move_choice[1] == 2 and (who[0] + 1 <= len(screen)-1) and (who[1] + 1 <= len(screen)-1):
-            if screen[(who[0] + 1)][(who[1] + 1)] not in (trail_text):
-                who[0] += 1
-                who[1] += 1
+                board_transport(player_moves())
+        elif move_choice[1] == 2 and (player_xy[0] + 1 <= len(screen)-1) and (player_xy[1] + 1 <= len(screen)-1):
+            if screen[(player_xy[0] + 1)][(player_xy[1] + 1)] not in (trail_text):
+                player_xy[0] += 1
+                player_xy[1] += 1
             else:
-                who[2] = "err"
+                board_transport(player_moves())
         else:
-            who[2] = "err"
+            board_transport(player_moves())
 
 def draw():
     global count
     clear()
-    chance, win = randint(0, trail_random), randint(0, trail_random)
-    if chance == win: player_moves()
-    for PLAYER in player_list:
-        screen[PLAYER[0]][PLAYER[1]] = trail_text[count%len(trail_text)-1] # modulo <3
-        trail_history.append(PLAYER[:])
-
+    screen[player_xy[0]][player_xy[1]] = trail_text[count%len(trail_text)-1]
     print_board(screen)
-    for g in trail_history[:]:
-        screen[g[0]][g[1]] = blank_icon
-    for g in trail_history[:]:
-        del(trail_history[0])
-
-
-
-
-    time.sleep(trail_speed)
+    trail.append(player_xy[:])
+    if len(trail) > trail_len:
+        screen[trail[0][0]][trail[0][1]] = blank_icon
+        del(trail[0])
+    time.sleep(0.066666666)
     count += 1
 print "You can change trail text, trail length and map size by editing Config variables!"
 time.sleep(2)
 while True:
     safety = 0
-    mover = True
-    while mover:
-        temp_player_list = []
-        for player in player_list:
-            temp_player_list.append(player[:])
-        
-        fail = False
-        if move == None:
-            board_transport(player_moves(), player_zero)
-        else:
-            for PLAYER in temp_player_list:
-                board_transport(move, PLAYER)
-        for players in temp_player_list:
-            if players[2] != "":
-                     fail = True
-        if not fail:
-            for indx in range(len(temp_player_list)):
-                player_list[indx] = temp_player_list[indx]
-            mover = False
-        else:
-            player_moves()
-
-
-                
-
-
+    if move == None:
+        board_transport(player_moves())
+    else:
+        board_transport(move)
     draw()
-    if count % 1000 == 0 and trail_speed != 0.157:
-        trail_speed = float(raw_input("enter"))
 
     
 
