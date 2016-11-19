@@ -1,3 +1,4 @@
+#!usr/bin/env python
 from random import randint
 import time
 from sys import platform
